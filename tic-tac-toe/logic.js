@@ -1,17 +1,7 @@
-var compMove;
-var boardCheck;
-var checkWin;
-var c1;
-var c2;
-var c3;
-var c4;
-var c5;
-var c6;
-var c7;
-var c8;
-var c9;
+var compMove, boardCheck, checkWin, c1, c2, c3, c4, c5,  c6, c7, c8, c9, count = 1;
 var gameEnded = false;
 var turn = 0;               //human = 'x'   comp = 'o'
+var arrElements = new Array(9);
 
 var newGame = function(){
     $('td').one('click', function(event){
@@ -32,164 +22,205 @@ $(document).ready(function(){
 });
 
 boardCheck = function () {
-    c1 = $('#c1').html();
-    c2 = $('#c2').html();
-    c3 = $('#c3').html();
-    c4 = $('#c4').html();
-    c5 = $('#c5').html();
-    c6 = $('#c6').html();
-    c7 = $('#c7').html();
-    c8 = $('#c8').html();
-    c9 = $('#c9').html();
+	for(var i = 0; i < 9; i++)
+	{
+		arrElements[i] = $('#c'+i).html();
+	}
+
+//    for (var i = 0; i < 3; i++) {
+//        tableArr[i] = new Array(3);
+//    }
+
+//    for (var k = 0; k < tableArr.length; k++) {
+//        for (var l = 0; l < tableArr.length; l++) {
+//            tableArr[k][l] = $('#c'+ count).html();
+//            count++;
+//        }
+//   }
 };
 
-
-
 compMove = function(){
-    if (c1 == "" && ((c4=='x' && c7=='x') || 
-	(c2=='x' && c3=='x') || (c5=='x' && c9=='x'))) {
-		$('#c1').text("o");
-        turn = 0;
-	}
-	else {
-		if (c2=="" && ((c5=='x' && c8=='x') || (c1=='x' && c3=='x'))) {
-			$('#c2').text("o");
-            turn = 0;
-		}
-		else {
-			if (c3 == "" && ((c1=='x' && c2=='x') || (c6=='x' && c9=='x') || 
-			(c5=='x' && c7=='x'))) {
-				$('#c3').text("o");
-                turn = 0;
-			}
-			else{
-				if(c4 == "" && ((c5=='x' && c6=='x') || (c1=='x' && c7=='x'))){
-					$('#c4').text("o");
+    var flag = true;
+        for(var p = 0; p < 9; p++){
+            if(p >= 0 && p < 3){    //check vertical for first row
+                if(arrElements[p] == "" && (arrElements[p+3] == arrElements[p+6] && arrElements[p+3] == "x")){  
+                    $('#c' + p).text("o");
                     turn = 0;
-				}
-				else{
-					if(c5 == "" && ((c2=='x' && c8=='x') || (c4=='x' && c6=='x') ||
-					(c3=='x' && c7=='x') || (c1=='x' && c9=='x'))){
-						$('#c5').text("o");
+                    flag = false;
+                    return;
+                }
+            }
+            if(p >= 3 && p < 6){   //check vertical for second row
+                if(arrElements[p] == "" && (arrElements[p+3] == arrElements[p-3] && arrElements[p+3] == "x")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+            }
+
+            if(p >=6 && p < 9){    //check vertical for third row
+                if(arrElements[p] == "" && (arrElements[p-3] == arrElements[p-6] && arrElements[p-3] == "x")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+            }
+
+            if(p == 1 || p == 4 || p == 7){     //check horizontal for seond column
+                 if(arrElements[p] == "" && (arrElements[p-1] == arrElements[p+1] && arrElements[p-1] == "x")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+            }
+            if(p == 2 || p == 5 || p == 8){      //check horizontal for third column
+                 if(arrElements[p] == "" && (arrElements[p-1] == arrElements[p-2] && arrElements[p-1] == "x")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+            }
+
+            if(p == 0 || p == 3 || p == 6){      //check horizontal for first column
+                 if(arrElements[p] == "" && (arrElements[p+1] == arrElements[p+2] && arrElements[p+1] == "x")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+            }
+            //check for diagonals
+            if(p == 0){     
+                if(arrElements[p] == "" && (arrElements[p+4] == arrElements[p+8] && arrElements[p+4] == "x"))
+                {
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+            }
+
+            if(p == 2){
+                if(arrElements[p] ==  "" && (arrElements[p+2] == arrElements[p+4] && arrElements[p+2] == "x")){
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+            }
+
+            if(p == 4){
+                if(arrElements[p] == "" && ((arrElements[p+2] == arrElements[p-2] && arrElements[p-2] == "x") || (arrElements[p+4] == arrElements[p-4] && arrElements[p-4] == "x"))){
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+            }
+
+            if(p == 6){
+                if(arrElements[p] ==  "" && (arrElements[p-2] == arrElements[p-4] && arrElements[p-2] == "x")){
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+            }
+
+            if(p == 8){     
+                if(arrElements[p] == "" && (arrElements[p-4] == arrElements[p-8] && arrElements[p-4] == "x"))
+                {
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+            }
+        }
+       
+        if(flag)
+        {
+            if(arrElements[0] == ""){
+                $('#c1').text("o");
+                turn = 0;
+            }
+            else{
+                if(arrElements[3] == ""){
+                    $('#c4').text("o");
+                    turn = 0;
+                }
+                else{
+                    if(arrElements[4] == ""){
+                        $('#c5').text("o");
                         turn = 0;
-					}
-					else{
-						if(c6 == "" && ((c3=='x' && c9=='x') || (c5=='x' && c4=='x'))){
-							$('#c6').text("o");
+                    }
+                    else{
+                        if(arrElements[7] == ""){
+                            $('#c8').text("o");
                             turn = 0;
-						}
-						else{
-							if(c7 == "" && ((c1=='x' && c4=='x') || (c5=='x' && c3=='x') ||
-							(c8=='x' && c9=='x'))){
-								$('#c7').text("o");
+                        }
+                        else{
+                            if(arrElements[8] == ""){
+                                $('#c9').text("o");
                                 turn = 0;
-							}
-							else{
-								if(c8 == "" && ((c2=='x' && c5=='x') || (c7=='x' && c9=='x'))){
-									$('#c8').text("o");
-                                    turn = 0;
-								}
-								else{
-									if(c9 == "" && ((c3=='x' && c6=='x') || (c1=='x' && c5=='x') ||
-									(c7=='x' && c8=='x'))){
-										$('#c9').text("o");
-                                        turn = 0;
-									}
-									else{
-										if(c1==""){
-											$('#c1').text("o");
-                                            turn = 0;
-										}
-										else{
-											if(c4 == ""){
-												$('#c4').text("o");
-                                                turn = 0;
-											}
-											else{
-												if(c5 == ""){
-													$('#c5').text("o");
-                                                    turn = 0;
-												}
-												else{
-													if(c8 == ""){
-														$('#c8').text("o");
-                                                        turn = 0;
-													}
-													else{
-														if(c9 == ""){
-															$('#c9').text("o");
-                                                            turn = 0;
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+                            }
+                        }
+                    }
+                }
+            }
+        }
 };
 
 checkWin = function () {
     if (gameEnded) {
 		return;
 	}
-
-    var currElement;
-	var arrElements = [];
-	for(var i=1; i<=9;i++)
-	{
-		currElement = "c" + i;
-		arrElements.push($('#'+currElement).html());
-	}
-
     if (jQuery.inArray("", arrElements)!=-1) {
         //vertical
-        for (var j = 0; j <= 2; j++) {
-            if (arrElements[j] == arrElements[j + 3] && arrElements[j] == arrElements[j + 6] && arrElements[j] == 'x') {
+        for (var u = 0; u <= 2; u++) {
+            if (arrElements[u] == arrElements[u + 3] && arrElements[u] == arrElements[u + 6] && arrElements[u] == 'x') {
                 alert('You win!');
                 gameEnded = true;
             }
-            else if (arrElements[j] == arrElements[j + 3] && arrElements[j] == arrElements[j + 6] && arrElements[j] == 'o') {
+            else if (arrElements[u] == arrElements[u + 3] && arrElements[u] == arrElements[u + 6] && arrElements[u] == 'o') {
                 alert('You lose!');
                 gameEnded = true;
             }
         }
 
         //horizontal
-        for (var k = 0; k < 6; k = k + 3) {
-            if (arrElements[k] == arrElements[k + 1] && arrElements[k] == arrElements[k + 2] && arrElements[k] == 'x') {
+        for (var h = 0; h < 6; h = h + 3) {
+            if (arrElements[h] == arrElements[h + 1] && arrElements[h] == arrElements[h + 2] && arrElements[h] == 'x') {
                  alert('You win!');
                  gameEnded = true;
             }
-            else if (arrElements[k] == arrElements[k + 1] && arrElements[k] == arrElements[k + 2] && arrElements[k] == 'o') {
+            else if (arrElements[h] == arrElements[h + 1] && arrElements[h] == arrElements[h + 2] && arrElements[h] == 'o') {
                  alert('You lose!');
                  gameEnded = true;
             }
         }
         //diagonals
-        for(var m = 0; m < 9; m = m + 4){
-            if (arrElements[m] == arrElements[m + 4] && arrElements[m] == arrElements[m + 8] && arrElements[m] == 'x') {
+        for(var g = 0; g < 9; g = g + 4){
+            if (arrElements[g] == arrElements[g + 4] && arrElements[g] == arrElements[g + 8] && arrElements[g] == 'x') {
                 alert('You win!');
                  gameEnded = true;
             }
-            if (arrElements[m] == arrElements[m + 4] && arrElements[m] == arrElements[m + 8] && arrElements[m] == 'o') {
+            else if (arrElements[g] == arrElements[g + 4] && arrElements[g] == arrElements[g + 8] && arrElements[g] == 'o') {
                 alert('You lose!');
                  gameEnded = true;
             }
         }
 
-        for(var n = 2; n < 7; n = n + 2){
-            if (arrElements[n] == arrElements[n + 2] && arrElements[n] == arrElements[n + 4] && arrElements[n] == 'x') {
+        for(var b = 2; b < 7; b = b + 2){
+            if (arrElements[b] == arrElements[b + 2] && arrElements[b] == arrElements[b + 4] && arrElements[b] == 'x') {
                 alert('You win!');
                  gameEnded = true;
             }
-            if (arrElements[n] == arrElements[n + 2] && arrElements[n] == arrElements[n + 4] && arrElements[n] == 'o') {
+            else if (arrElements[b] == arrElements[b + 2] && arrElements[b] == arrElements[b + 4] && arrElements[b] == 'o') {
                 alert('You lose!');
                  gameEnded = true;
             }
@@ -200,3 +231,4 @@ checkWin = function () {
         gameEnded = true;
     }
 };
+
