@@ -16,7 +16,7 @@ var newGame = function(){
         }
     });
 };
-//testing new branch
+
 $(document).ready(function(){
     newGame();
 });
