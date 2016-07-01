@@ -43,15 +43,28 @@ compMove = function(){
     var flag = true;
         for(var p = 0; p < 9; p++){
             if(p >= 0 && p < 3){    //check vertical for first row
-                if(arrElements[p] == "" && (arrElements[p+3] == arrElements[p+6] && arrElements[p+3] == "x")){  
+                if(arrElements[p] == "" && (arrElements[p+3] == arrElements[p+6] && arrElements[p+3] == "o")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] == "" && (arrElements[p+3] == arrElements[p+6] && arrElements[p+3] == "x")){  
                     $('#c' + p).text("o");
                     turn = 0;
                     flag = false;
                     return;
                 }
             }
+
             if(p >= 3 && p < 6){   //check vertical for second row
-                if(arrElements[p] == "" && (arrElements[p+3] == arrElements[p-3] && arrElements[p+3] == "x")){  
+                if(arrElements[p] == "" && (arrElements[p+3] == arrElements[p-3] && arrElements[p+3] == "o")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] == "" && (arrElements[p+3] == arrElements[p-3] && arrElements[p+3] == "x")){  
                     $('#c' + p).text("o");
                     turn = 0;
                     flag = false;
@@ -60,7 +73,13 @@ compMove = function(){
             }
 
             if(p >=6 && p < 9){    //check vertical for third row
-                if(arrElements[p] == "" && (arrElements[p-3] == arrElements[p-6] && arrElements[p-3] == "x")){  
+                if(arrElements[p] == "" && (arrElements[p-3] == arrElements[p-6] && arrElements[p-3] == "o")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] == "" && (arrElements[p-3] == arrElements[p-6] && arrElements[p-3] == "x")){  
                     $('#c' + p).text("o");
                     turn = 0;
                     flag = false;
@@ -69,7 +88,13 @@ compMove = function(){
             }
 
             if(p == 1 || p == 4 || p == 7){     //check horizontal for seond column
-                 if(arrElements[p] == "" && (arrElements[p-1] == arrElements[p+1] && arrElements[p-1] == "x")){  
+                 if(arrElements[p] == "" && (arrElements[p-1] == arrElements[p+1] && arrElements[p-1] == "o")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] == "" && (arrElements[p-1] == arrElements[p+1] && arrElements[p-1] == "x")){  
                     $('#c' + p).text("o");
                     turn = 0;
                     flag = false;
@@ -77,7 +102,13 @@ compMove = function(){
                 }
             }
             if(p == 2 || p == 5 || p == 8){      //check horizontal for third column
-                 if(arrElements[p] == "" && (arrElements[p-1] == arrElements[p-2] && arrElements[p-1] == "x")){  
+                 if(arrElements[p] == "" && (arrElements[p-1] == arrElements[p-2] && arrElements[p-1] == "o")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] == "" && (arrElements[p-1] == arrElements[p-2] && arrElements[p-1] == "x")){  
                     $('#c' + p).text("o");
                     turn = 0;
                     flag = false;
@@ -86,7 +117,13 @@ compMove = function(){
             }
 
             if(p == 0 || p == 3 || p == 6){      //check horizontal for first column
-                 if(arrElements[p] == "" && (arrElements[p+1] == arrElements[p+2] && arrElements[p+1] == "x")){  
+                 if(arrElements[p] == "" && (arrElements[p+1] == arrElements[p+2] && arrElements[p+1] == "o")){  
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] == "" && (arrElements[p+1] == arrElements[p+2] && arrElements[p+1] == "x")){  
                     $('#c' + p).text("o");
                     turn = 0;
                     flag = false;
@@ -95,7 +132,14 @@ compMove = function(){
             }
             //check for diagonals
             if(p == 0){     
-                if(arrElements[p] == "" && (arrElements[p+4] == arrElements[p+8] && arrElements[p+4] == "x"))
+                if(arrElements[p] == "" && (arrElements[p+4] == arrElements[p+8] && arrElements[p+4] == "o"))
+                {
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] == "" && (arrElements[p+4] == arrElements[p+8] && arrElements[p+4] == "x"))
                 {
                     $('#c' + p).text("o");
                     turn = 0;
@@ -105,7 +149,13 @@ compMove = function(){
             }
 
             if(p == 2){
-                if(arrElements[p] ==  "" && (arrElements[p+2] == arrElements[p+4] && arrElements[p+2] == "x")){
+                if(arrElements[p] ==  "" && (arrElements[p+2] == arrElements[p+4] && arrElements[p+2] == "o")){
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] ==  "" && (arrElements[p+2] == arrElements[p+4] && arrElements[p+2] == "x")){
                     $('#c' + p).text("o");
                     turn = 0;
                     flag = false;
@@ -114,7 +164,13 @@ compMove = function(){
             }
 
             if(p == 4){
-                if(arrElements[p] == "" && ((arrElements[p+2] == arrElements[p-2] && arrElements[p-2] == "x") || (arrElements[p+4] == arrElements[p-4] && arrElements[p-4] == "x"))){
+                if(arrElements[p] == "" && ((arrElements[p+2] == arrElements[p-2] && arrElements[p-2] == "o") || (arrElements[p+4] == arrElements[p-4] && arrElements[p-4] == "o"))){
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] == "" && ((arrElements[p+2] == arrElements[p-2] && arrElements[p-2] == "x") || (arrElements[p+4] == arrElements[p-4] && arrElements[p-4] == "x"))){
                     $('#c' + p).text("o");
                     turn = 0;
                     flag = false;
@@ -123,7 +179,13 @@ compMove = function(){
             }
 
             if(p == 6){
-                if(arrElements[p] ==  "" && (arrElements[p-2] == arrElements[p-4] && arrElements[p-2] == "x")){
+                if(arrElements[p] ==  "" && (arrElements[p-2] == arrElements[p-4] && arrElements[p-2] == "o")){
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] ==  "" && (arrElements[p-2] == arrElements[p-4] && arrElements[p-2] == "x")){
                     $('#c' + p).text("o");
                     turn = 0;
                     flag = false;
@@ -132,7 +194,14 @@ compMove = function(){
             }
 
             if(p == 8){     
-                if(arrElements[p] == "" && (arrElements[p-4] == arrElements[p-8] && arrElements[p-4] == "x"))
+                if(arrElements[p] == "" && (arrElements[p-4] == arrElements[p-8] && arrElements[p-4] == "o"))
+                {
+                    $('#c' + p).text("o");
+                    turn = 0;
+                    flag = false;
+                    return;
+                }
+                else if(arrElements[p] == "" && (arrElements[p-4] == arrElements[p-8] && arrElements[p-4] == "x"))
                 {
                     $('#c' + p).text("o");
                     turn = 0;
