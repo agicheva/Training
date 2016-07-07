@@ -26,17 +26,6 @@ boardCheck = function () {
 	{
 		arrElements[i] = $('#c'+i).html();
 	}
-
-//    for (var i = 0; i < 3; i++) {
-//        tableArr[i] = new Array(3);
-//    }
-
-//    for (var k = 0; k < tableArr.length; k++) {
-//        for (var l = 0; l < tableArr.length; l++) {
-//            tableArr[k][l] = $('#c'+ count).html();
-//            count++;
-//        }
-//   }
 };
 
 compMove = function(){
@@ -214,27 +203,27 @@ compMove = function(){
         if(flag)
         {
             if(arrElements[0] == ""){
-                $('#c1').text("o");
+                $('#c0').text("o");
                 turn = 0;
             }
             else{
                 if(arrElements[3] == ""){
-                    $('#c4').text("o");
+                    $('#c3').text("o");
                     turn = 0;
                 }
                 else{
                     if(arrElements[4] == ""){
-                        $('#c5').text("o");
+                        $('#c4').text("o");
                         turn = 0;
                     }
                     else{
                         if(arrElements[7] == ""){
-                            $('#c8').text("o");
+                            $('#c7').text("o");
                             turn = 0;
                         }
                         else{
                             if(arrElements[8] == ""){
-                                $('#c9').text("o");
+                                $('#c8').text("o");
                                 turn = 0;
                             }
                         }
