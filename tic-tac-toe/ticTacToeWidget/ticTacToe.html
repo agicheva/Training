@@ -3,11 +3,14 @@
     <head>
         <link href="ticTacToe.css" type="text/css" rel="stylesheet"/>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script   src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"  ></script>
+        <script   src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"  ></script>
         <script src="ticTacToe.js"> </script>
         <script type="text/javascript">
             $(document).ready(function () {
-                $("#divId").ticTacToe();
+                $(".ticky").ticTacToe();
+                $(".ticky").ticTacToe("setOption", "xColor", "red");
+                $(".ticky").ticTacToe("setOption", "oColor", "blue");
+                $(".ticky").ticTacToe("setOption", "firstPlayer", "k");
             });
         </script>
     </head>
@@ -15,5 +18,6 @@
     <body>
         <div id="divId">
         </div>
+        <div id="div1" class="ticky"></div>
     </body>
 </html>
