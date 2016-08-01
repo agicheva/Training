@@ -8,9 +8,32 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 $(".ticky").ticTacToe();
-                $(".ticky").ticTacToe("setOption", "xColor", "red");
-                $(".ticky").ticTacToe("setOption", "oColor", "blue");
-                $(".ticky").ticTacToe("setOption", "firstPlayer", "k");
+                $(".ticky").ticTacToe({
+                    rendered: function (evt, ui) {
+                        console.log("rendered");
+                    },
+                    rendering: function (evt, ui) {
+                        console.log(ui.element);
+                        console.log("rendering");
+                        //return false;
+                    },
+                    gameStarted: function (evt, ui) {
+                        console.log("gameStarted");
+                    },
+                    gameEnded: function (evt, ui) {
+                        console.log("gameEnded");
+                    },
+                    gameEnding: function (evt, ui) {
+                        console.log("gameEnding");
+                       //return false;
+                    }
+                });
+                $(".ticky").ticTacToe("setOption", "firstColor", "red");
+                $(".ticky").ticTacToe("setOption", "secondColor", "blue");
+                $(".ticky").ticTacToe("setOption", "firstPlayer", "t");
+                $(".ticky").ticTacToe("setOption", "secondPlayer", "y");
+                $(".ticky").ticTacToe("setOption", "width", '222px');
+                $(".ticky").ticTacToe("setOption", "height", '222px');
             });
         </script>
     </head>
