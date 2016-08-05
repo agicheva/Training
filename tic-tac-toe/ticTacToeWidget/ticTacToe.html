@@ -2,13 +2,17 @@
 <html>
     <head>
         <link href="ticTacToe.css" type="text/css" rel="stylesheet"/>
+        <link rel="stylesheet" href="jquery-ui.css">
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script   src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"  ></script>
+
         <script src="ticTacToe.js"> </script>
+
         <script type="text/javascript">
             $(document).ready(function () {
-                $(".ticky").ticTacToe();
-                $(".ticky").ticTacToe({
+               // $("#div1").ticTacToe();
+                $("#div1").ticTacToe({
                     rendered: function (evt, ui) {
                         console.log("rendered");
                     },
@@ -20,27 +24,89 @@
                     gameStarted: function (evt, ui) {
                         console.log("gameStarted");
                     },
+                    gameStarting: function (evt, ui) {
+                        console.log("gameStarting");
+                        //return false;
+                    },
                     gameEnded: function (evt, ui) {
                         console.log("gameEnded");
                     },
                     gameEnding: function (evt, ui) {
                         console.log("gameEnding");
-                       //return false;
+                        //return false;
                     }
                 });
-                $(".ticky").ticTacToe("setOption", "firstColor", "red");
-                $(".ticky").ticTacToe("setOption", "secondColor", "blue");
-                $(".ticky").ticTacToe("setOption", "firstPlayer", "t");
-                $(".ticky").ticTacToe("setOption", "secondPlayer", "y");
-                $(".ticky").ticTacToe("setOption", "width", '222px');
-                $(".ticky").ticTacToe("setOption", "height", '222px');
+                $("#div1").ticTacToe("setOption", "firstColor", "red");
+                $("#div1").ticTacToe("setOption", "secondColor", "blue");
+                $("#div1").ticTacToe("setOption", "width", '222px');
+                $("#div1").ticTacToe("setOption", "height", '222px');
+                $("#div1").ticTacToe("setOption", "firstPlayer", "t");
+                $("#div1").ticTacToe("setOption", "backgroundColor", "pink");
+
+               
+                
+                $("#div2").ticTacToe({
+                    rendered: function (evt, ui) {
+                        console.log("rendered");
+                    },
+                    rendering: function (evt, ui) {
+                        console.log(ui.element);
+                        console.log("rendering");
+                        //return false;
+                    },
+                    gameStarted: function (evt, ui) {
+                        console.log("gameStarted");
+                    },
+                    gameStarting: function (evt, ui) {
+                        console.log("gameStarting");
+                        //return false;
+                    },
+                    gameEnded: function (evt, ui) {
+                        console.log("gameEnded");
+                    },
+                    gameEnding: function (evt, ui) {
+                        console.log("gameEnding");
+                        //return false;
+                    }
+                });
+                $("#div2").ticTacToe("setOption", "width", '299px');
+                $("#div2").ticTacToe("setOption", "height", '299px');
+                $("#div2").ticTacToe("setOption", "backgroundColor", "white");
+
+                // $("#div3").ticTacToe();
+                $("#div3").ticTacToe({
+                    rendered: function (evt, ui) {
+                        console.log("rendered");
+                    },
+                    rendering: function (evt, ui) {
+                        console.log(ui.element);
+                        console.log("rendering");
+                        //return false;
+                    },
+                    gameStarted: function (evt, ui) {
+                        console.log("gameStarted");
+                    },
+                    gameStarting: function (evt, ui) {
+                        console.log("gameStarting");
+                        //return false;
+                    },
+                    gameEnded: function (evt, ui) {
+                        console.log("gameEnded");
+                    },
+                    gameEnding: function (evt, ui) {
+                        console.log("gameEnding");
+                        //return false;
+                    }
+                });
+                $("#div3").ticTacToe("setOption", "width", '299px');
+                $("#div3").ticTacToe("setOption", "height", '299px');
             });
         </script>
     </head>
 
     <body>
-        <div id="divId">
-        </div>
-        <div id="div1" class="ticky"></div>
+        <div id="div1"></div>
+        <div id="div2"></div>
+        <div id="div3"></div>
     </body>
 </html>
