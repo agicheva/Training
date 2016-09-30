@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QUnit Test Suite</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" ></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-1.10.0.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/qunit/qunit-1.10.0.js"></script>
+    <!-- Your project file goes here -->
+    <script type="text/javascript" src="ticTacToe.js"></script>
+    <link rel="stylesheet" href="ticTacToe.css">
+    <!-- Your tests file goes here -->
+    <!-- <script type="text/javascript" src="myTests.js"></script>   -->
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <div id="tictac"></div>
+
+    <script>
+    $(document).ready(function () {
+    // Create a tictac
+		function loadTestbeds() {
+        $("#tictac").ticTacToe({
+            width: "200px",
+            height: "200px"
+        });
+
+		}
+		initialized = false;
+		module("Tic Tac Toe ", {
+			setup: function() {
+				//pause testing until tictac in initialized
+				if (!initialized) {
+					stop();
+					loadTestbeds();
+					setTimeout(function () { start(); }, 100);
+					initialized = true;
+				}
+			},
+			teardown: function() {
+			}
+		});
+        
+        var testId = "Setting width of widget.";
+        test(testId, 1, function(){
+            $('#tictac').ticTacToe("option", "width", "300px");
+
+            equal($('#tictac').ticTacToe("option", "width"), "300px", "The width of the widget is set.");
+        });
+
+        var testId = "Setting height of widget.";
+        test(testId, 1, function(){
+            $('#tictac').ticTacToe("option", "height", "300px");
+
+            equal($("#tictac").ticTacToe("option", "height"), "300px", "The height of the widget is set.");
+        });
+
+        var testId = "Setting widget's background color";
+        test(testId, 1, function(){
+            $('#tictac').ticTacToe("option", "backgroundColor", "white");
+
+            equal($('#tictac').ticTacToe("option", "backgroundColor"), "white", "The widget's background color is set.");
+        });
+
+        var testId = "Setting first player's color.";
+        test(testId,1, function(){
+             $("#tictac").ticTacToe("option","firstColor", "pink");
+
+             equal($("#tictac").ticTacToe("option", "firstColor"), "pink", "The first player's color is changed.");
+        });
+
+        var testId = "Setting second player's color."
+        test(testId, 1, function(){
+            $('#tictac').ticTacToe("option", "secondColor", "green");
+
+            equal($("#tictac").ticTacToe("option", "secondColor"), "green", "The second player's color is changed.");
+        });
+
+        var testId = "Setting fist player index for playing.";
+        test(testId, 1, function(){
+            $('#tictac').ticTacToe("option", "firstPlayer", "c");
+
+            equal($("#tictac").ticTacToe("option", "firstPlayer"), "c", "The first player index for playing is set.");
+        });
+
+        var testId = "Setting second player index for playing.";
+        test(testId, 1, function(){
+            $("#tictac").ticTacToe("option", "secondPlayer", "p");
+
+            equal($("#tictac").ticTacToe("option", "secondPlayer"), "p", "The second player index for playing is set.");
+        });
+
+        var testId = "Enable start button.";
+        test(testId, 1, function(){
+            $("#tictac").ticTacToe("option", "enableStartButton", true);
+
+            equal($("#tictac").ticTacToe("option", "enableStartButton"), true, "The start button is enabled.");
+        });
+
+        var testId = "Enable reset button.";
+        test(testId, 1, function(){
+            $("#tictac").ticTacToe("option", "enableResetButton", true);
+
+            equal($("#tictac").ticTacToe("option", "enableResetButton"), true, "The reset button is enabled.");
+        });
+
+        var testId = "Start playing the game ";
+             test(testId, 2, function(){
+                 $("#tictac > table > tr:nth-child(1) > td:nth-child(1)").click();
+
+                 equal($("#tictac > table > tr:nth-child(1) > td:nth-child(1) > span").html(), 
+                    $("#tictac").ticTacToe("option", "firstPlayer"), 
+                    "Right index for the first player in the cell.");
+                    
+                 equal($("#tictac > table > tr:nth-child(2) > td:nth-child(1) > span").html(), 
+                    $("#tictac").ticTacToe("option", "secondPlayer"), 
+                    "Right index for the second player in the cell.");
+            });
+    });
+    </script>
+</body>
+</html>

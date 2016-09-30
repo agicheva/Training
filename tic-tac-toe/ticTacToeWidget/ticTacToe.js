@@ -379,7 +379,6 @@
         compMove: function (turn, gameEnded, arrayCells) {
             var flag = true;
             var self = this;
-            //var arrayCells = this._render();
             for (var p = 0; p < 9; p++) {
                 if (p >= 0 && p < 3) {    //check vertical for first row
                     if (arrayCells[p].children().html() === undefined && (arrayCells[p + 3].children().html() === arrayCells[p + 6].children().html() && arrayCells[p + 3].children().html() === self.options.secondPlayer)) {
