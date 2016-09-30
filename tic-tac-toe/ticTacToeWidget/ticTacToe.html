@@ -11,7 +11,6 @@
 
         <script type="text/javascript">
             $(document).ready(function () {
-               // $("#div1").ticTacToe();
                 $("#div1").ticTacToe({
                     rendered: function (evt, ui) {
                         console.log("rendered");
@@ -34,72 +33,49 @@
                     gameEnding: function (evt, ui) {
                         console.log("gameEnding");
                         //return false;
-                    }
+                    },
+                    cellRendering: function (evt, ui) {
+                        $(ui.element).css('background-color', 'green');
+                    },
+                    enableStartButton: true,
+                    firstColor: "red",
+                    secondColor: "blue",
+                    width: "500px",
+                    height: "500px",
+                    backgroundColor: "pink",
+                    enableStartButton: true,
+                    enableResetButton: true
                 });
-                $("#div1").ticTacToe("setOption", "firstColor", "red");
-                $("#div1").ticTacToe("setOption", "secondColor", "blue");
-                $("#div1").ticTacToe("setOption", "width", '222px');
-                $("#div1").ticTacToe("setOption", "height", '222px');
-                $("#div1").ticTacToe("setOption", "firstPlayer", "t");
-                $("#div1").ticTacToe("setOption", "backgroundColor", "pink");
 
-               
-                
-                $("#div2").ticTacToe({
-                    rendered: function (evt, ui) {
-                        console.log("rendered");
-                    },
-                    rendering: function (evt, ui) {
-                        console.log(ui.element);
-                        console.log("rendering");
-                        //return false;
-                    },
-                    gameStarted: function (evt, ui) {
-                        console.log("gameStarted");
-                    },
-                    gameStarting: function (evt, ui) {
-                        console.log("gameStarting");
-                        //return false;
-                    },
-                    gameEnded: function (evt, ui) {
-                        console.log("gameEnded");
-                    },
-                    gameEnding: function (evt, ui) {
-                        console.log("gameEnding");
-                        //return false;
-                    }
-                });
-                $("#div2").ticTacToe("setOption", "width", '299px');
-                $("#div2").ticTacToe("setOption", "height", '299px');
-                $("#div2").ticTacToe("setOption", "backgroundColor", "white");
-
-                // $("#div3").ticTacToe();
-                $("#div3").ticTacToe({
-                    rendered: function (evt, ui) {
-                        console.log("rendered");
-                    },
-                    rendering: function (evt, ui) {
-                        console.log(ui.element);
-                        console.log("rendering");
-                        //return false;
-                    },
-                    gameStarted: function (evt, ui) {
-                        console.log("gameStarted");
-                    },
-                    gameStarting: function (evt, ui) {
-                        console.log("gameStarting");
-                        //return false;
-                    },
-                    gameEnded: function (evt, ui) {
-                        console.log("gameEnded");
-                    },
-                    gameEnding: function (evt, ui) {
-                        console.log("gameEnding");
-                        //return false;
-                    }
-                });
-                $("#div3").ticTacToe("setOption", "width", '299px');
-                $("#div3").ticTacToe("setOption", "height", '299px');
+                //$("#div2").ticTacToe({
+                //    rendered: function (evt, ui) {
+                //        console.log("rendered");
+                //    },
+                //    rendering: function (evt, ui) {
+                //        console.log(ui.element);
+                //        console.log("rendering");
+                //        //return false;
+                //    },
+                //    gameStarted: function (evt, ui) {
+                //        console.log("gameStarted");
+                //    },
+                //    gameStarting: function (evt, ui) {
+                //        console.log("gameStarting");
+                //        //return false;
+                //    },
+                //    gameEnded: function (evt, ui) {
+                //        console.log("gameEnded");
+                //    },
+                //    gameEnding: function (evt, ui) {
+                //        console.log("gameEnding");
+                //        //return false;
+                //    },
+                //    enableResetButton: true,
+                //    enableStartButton:true
+                //});
+                //$("#div2").ticTacToe("setOption", "width", '299px');
+                //$("#div2").ticTacToe("setOption", "height", '299px');
+                //$("#div2").ticTacToe("setOption", "backgroundColor", "white");
             });
         </script>
     </head>
@@ -107,6 +83,6 @@
     <body>
         <div id="div1"></div>
         <div id="div2"></div>
-        <div id="div3"></div>
+        <!--<div id="div3"></div>-->
     </body>
 </html>

@@ -1,9 +1,8 @@
 (function ($) {
     $.widget("ui.ticTacToe", {
-        //vars: {
-        //    arrayCells: []
-        //    //firstPlayer: $('<span></span>')
-        //},
+        vars: {
+            _arrayCells: []
+        },
 
         options: {
             /* type="string|number|null Gets/Sets how the width of the control can be set." 
@@ -39,7 +38,11 @@
             /* type="string Gets/Sets how the index of the first player can be set." */
             firstPlayer: 'x',
             /* type="string Gets/Sets how the index of the second player can be set." */
-            secondPlayer: 'o'
+            secondPlayer: 'o',
+            /*type="bool Allow setting start button to the widget." */
+            enableStartButton: false,
+            /*type="bool Allow setting reset button to the widget." */
+            enableResetButton: false
         },
 
         css: {
@@ -68,15 +71,27 @@
             gameStarted: "gameStarted",
             /* cancel="true" Event which is raised before click of start button. */
             gameStarting: "gameStarting",
-            /* cancel="false" Event which is raise on click of reset button. */
+            /* cancel="false" Event which is raised on click of reset button. */
             gameEnded: "gameEnded",
-            /*cancel="true" Event which is raise before the game is ended. */
-            gameEnding: "gameEnding"
+            /*cancel="true" Event which is raised before the game is ended. */
+            gameEnding: "gameEnding",
+            /*cancel="false" Event which is raised after cell is rendered. */
+            cellRendered: "cellRendered",
+            /*cancel="true" Event which is raised before cell is rendered. */
+            cellRendering: "cellRendering"
         },
 
         _create: function () {
             /* tocTacToe widget constructor goes here */
-            this._setButtons();
+            if (this.options.enableStartButton) {
+                this._renderStartButton();
+            }
+            if (this.options.enableResetButton) {
+                this._renderResetButton();
+            }
+            else {
+                this._render();
+            }
         },
 
         _triggerRendering: function(){
@@ -102,7 +117,7 @@
             };
             this._render();
             return this._trigger(this.events.gameStarted, null, args);
-        },
+        }, 
 
         _triggerGameStarting: function () {
             var args = {
@@ -118,12 +133,6 @@
                 element: this.element,
                 owner: this
             };
-
-            //for (var i = 0; i < 9; i++) {
-            //    $(arrayCells[i]).html("");
-            //}
-
-            this._detachEvents();
             return this._trigger(this.events.gameEnded, null, args);
         },
         
@@ -135,27 +144,80 @@
             return this._trigger(this.events.gameEnding, null, args);
         },
 
-        _setButtons: function () {
-            var self = this;
+        _trigerCellRendered: function(){
+            var args = {
+                element: this.element,
+                owner: this
+            };
+            return this._trigger(this.events.cellRendered, null, args);
+        },
+
+        _triggerCellRendering: function(){
+            var args = {
+                element: this.element.children().children().children(),
+                owner: this
+            };
+            return this._trigger(this.events.cellRendering, null, args);
+        },
+
+        _renderStartButton: function () {
             this.btnStart = $("<button>", {
-                text: "Start"
-            }).appendTo(this.element).button().one("click", function () {
-                var isGameStarting = self._triggerGameStarting();
-                if (isGameStarting) {
-                    self._triggerGameStarted();
-                }
-            });
+                text: "Start",
+                type: "start"
+            }).addClass("start").appendTo(this.element).button();
+            this._attachButtonsEvents("start", this.btnStart);
+        },
+
+        _renderResetButton: function(){
             this.btnReset = $("<button>", {
                 text: "Reset",
                 type: "reset"
-            }).appendTo(this.element).button().on("click", function () {
-                var isGameEnding = self._triggerGameEnding();
-                if (isGameEnding) {
-                    //self._triggerGameEnded();
+            }).addClass("reset").appendTo(this.element).button();
+            this._attachButtonsEvents("reset", this.btnReset);
+        },
+
+        _attachButtonsEvents: function(type, target){
+            var self = this;
+            if (!target) {
+                return;
+            }
+            target.on({
+                "click.button": function (event) {
+                    self._triggerButtonClick(event, type);
                 }
-            });
+            })
         },
         
+        _triggerButtonClick: function (event, buttonType) {
+            if (buttonType) {
+                switch (buttonType) {
+                    case "start": {
+                        var isGameStarting = this._triggerGameStarting();
+                        if (isGameStarting) {
+                            this._triggerGameStarted();
+                        }
+                    }
+                        break;
+                    case "reset": {
+                        var isGameEnding = this._triggerGameEnding();
+                        for (var i = 0; i < 9; i++) {
+                            this.vars._arrayCells[i].children().remove();
+                        }
+                        if (isGameEnding) {
+                            this._triggerGameEnded(this.vars._arrayCells);
+                        }
+                    }
+                        break;
+                }
+            }
+        },
+
+        destroy: function(){
+            this._detachEvents();
+
+            $.Widget.prototype.destroy.apply(this, arguments);
+        },
+
         _render: function () {
             var self = this;
             var gameEnded = false;
@@ -171,39 +233,45 @@
                 for (var i = 0; i < 3; i++) {
                     var row = $('<tr></tr>').addClass(this.css.row);
                     row.appendTo(table);
+                    this._triggerCellRendering();
                     for (var j = 0; j < 3; j++) {
                         var cell = $('<td></td>')      
                             .addClass(this.css.cell)
                             .appendTo(row)
                             .on("click", function () {
-                                var turn = 0;
-                                
-                                if (turn == 0) {
-                                    var span = $('<span></span>').addClass(self.css.firstPlayer);
-                                    $(this).append(span);
-                                    self._setFirstPlayerIndex(span);
-                                    self._applyfirstColor(span);
-                                    gameEnded = self.checkWin(gameEnded, arrayCells);
-                                    turn = 1;
-                                    if (gameEnded) {
-                                        return;
-                                    }
-
-                                    if (!gameEnded && turn == 1) {
-                                        self.compMove(turn, gameEnded, arrayCells);
-                                        self.checkWin(gameEnded, arrayCells);
-                                        turn = 0;
-                                    }
-                                }
+                                self._makeMoves(this, gameEnded, arrayCells);
                             });
                         arrayCells.push(cell);
                     }
                     this._triggerRendered();
                 }
             }
+            this.vars._arrayCells = arrayCells;
         },
+        
+        _makeMoves: function(element, gameEnded, arrayCells){
+            var turn = 0;
+            if (turn === 0) {
+                var span = $('<span></span>').addClass(this.css.firstPlayer);
+                $(element).append(span);
+                this._setFirstPlayerIndex(span);
+                this._applyfirstColor(span);
+                gameEnded = this.checkWin(gameEnded, arrayCells);
+                turn = 1;
+                if (gameEnded) {
+                    return;
+                }
 
-        setOption: function (option, value) {
+                if (!gameEnded && turn === 1) {
+                    this.compMove(turn, gameEnded, arrayCells);
+                    this.checkWin(gameEnded, arrayCells);
+                    turn = 0;
+                }
+            }
+        },      
+
+        _setOption: function (option, value) {
+            var self = this;
             var prevValue = this.options[ option ];
 			if (prevValue === value) {
 				return;
@@ -220,40 +288,51 @@
                 case "firstColor":
                     this._setfirstColor(value);
                     break;
-			    case "secondColor":
-			        this._setsecondColor(value);
+                case "secondColor":
+                    this._setsecondColor(value);
+                    break;
+                case "firstPlayer":
+                    if (this.options.firstPlayer !== this.options.secondPlayer) {
+                        this._setFirstPlayerIndex(value);
+                    } else {
+                        this.options.firstPlayer = prevValue;
+                    }
+                    break;
+                case "secondPlayer":
+                    if (this.options.firstPlayer !== this.options.secondPlayer) {
+                        this._setSecondPlayerIndex(value);
+                    } else {
+                        this.options.secondPlayer = prevValue;
+                    }
+                    break;
+                case "backgroundColor":
+                    this._setBackgroundColor(value);
+                    break;
+			    case "enableStartButton":
+			        this._setStartButton(value);
 			        break;
-			    case "firstPlayer":
-			        if (this.options.firstPlayer !== this.options.secondPlayer) {
-			            this._setFirstPlayerIndex(value);
-			        } else {
-			            this.options.firstPlayer = prevValue;
-                        //igNotifier
-			        }
-			        break;
-			    case "secondPlayer":
-			        this._setSecondPlayerIndex(value);
-			        if (this.options.firstPlayer !== this.options.secondPlayer) {
-			            this._setSecondPlayerIndex(value);
-			        } else {
-			            this.options.secondPlayer = prevValue;
-                        //igNotifier
-			        }
-			        break;
-			    case "backgroundColor":
-			        this._setBackgroundColor(value);
+			    case "enableResetButton":
+			        this._setResetButton(value);
 			        break;
 				default:
 					break;
 			}
         },
         
+        _setStartButton: function(value){
+            this.options.enableStartButton = value;
+        },
+
+        _setResetButton: function(value){
+            this.options.enableResetButton = value;
+        },
+
         _setWidth: function(value){
-            this.css.width = value;
+            this.element.css('width', value);
         },
 
          _setHeight: function(value){
-            this.css.hight = value;
+             this.element.css('height', value);
         },
 
         _setfirstColor: function(value){
@@ -291,12 +370,11 @@
             $(element).css("backgroundColor", this.options.backgroundColor);
         },
 
-        //_detachEvents: function () {
-        //    //var arrayCells = this._render();
-        //    for (var i = 0; i < 9; i++) {
-        //        $(arrayCells[i]).off('click');
-        //    }
-        //},
+        _detachEvents: function () {
+            for (var i = 0; i < 9; i++) {
+                $(this.vars._arrayCells[i]).off('click');
+            }
+        },
 
         compMove: function (turn, gameEnded, arrayCells) {
             var flag = true;
@@ -304,8 +382,8 @@
             //var arrayCells = this._render();
             for (var p = 0; p < 9; p++) {
                 if (p >= 0 && p < 3) {    //check vertical for first row
-                    if (arrayCells[p].children().html() == undefined && (arrayCells[p + 3].children().html() == arrayCells[p + 6].children().html() && arrayCells[p + 3].children().html() == self.options.secondPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    if (arrayCells[p].children().html() === undefined && (arrayCells[p + 3].children().html() === arrayCells[p + 6].children().html() && arrayCells[p + 3].children().html() === self.options.secondPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -313,8 +391,8 @@
                         flag = false;
                         return;
                     }
-                    else if (arrayCells[p].children().html() == undefined && (arrayCells[p + 3].children().html() == arrayCells[p + 6].children().html() && arrayCells[p + 3].children().html() == self.options.firstPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    else if (arrayCells[p].children().html() === undefined && (arrayCells[p + 3].children().html() === arrayCells[p + 6].children().html() && arrayCells[p + 3].children().html() === self.options.firstPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -325,8 +403,8 @@
                 }
 
                 if (p >= 3 && p < 6) {   //check vertical for second row
-                    if (arrayCells[p].children().html() == undefined && (arrayCells[p + 3].children().html() == arrayCells[p - 3].children().html() && arrayCells[p + 3].children().html() == self.options.secondPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    if (arrayCells[p].children().html() === undefined && (arrayCells[p + 3].children().html() === arrayCells[p - 3].children().html() && arrayCells[p + 3].children().html() === self.options.secondPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -334,8 +412,8 @@
                         flag = false;
                         return;
                     }
-                    else if (arrayCells[p].children().html() == undefined && (arrayCells[p + 3].children().html() == arrayCells[p - 3].children().html() && arrayCells[p + 3].children().html() == self.options.firstPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    else if (arrayCells[p].children().html() === undefined && (arrayCells[p + 3].children().html() === arrayCells[p - 3].children().html() && arrayCells[p + 3].children().html() === self.options.firstPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -346,8 +424,8 @@
                 }
 
                 if (p >= 6 && p < 9) {    //check vertical for third row
-                    if (arrayCells[p].children().html() == undefined && (arrayCells[p - 3].children().html() == arrayCells[p - 6].children().html() && arrayCells[p - 3].children().html() == self.options.secondPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    if (arrayCells[p].children().html() === undefined && (arrayCells[p - 3].children().html() === arrayCells[p - 6].children().html() && arrayCells[p - 3].children().html() === self.options.secondPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -355,8 +433,8 @@
                         flag = false;
                         return;
                     }
-                    else if (arrayCells[p].children().html() == undefined && (arrayCells[p - 3].children().html() == arrayCells[p - 6].children().html() && arrayCells[p - 3].children().html() == self.options.firstPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    else if (arrayCells[p].children().html() === undefined && (arrayCells[p - 3].children().html() === arrayCells[p - 6].children().html() && arrayCells[p - 3].children().html() === self.options.firstPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -366,9 +444,9 @@
                     }
                 }
 
-                if (p == 1 || p == 4 || p == 7) {     //check horizontal for seond column
-                    if (arrayCells[p].children().html() == undefined && (arrayCells[p - 1].children().html() == arrayCells[p + 1].children().html() && arrayCells[p - 1].children().html() == self.options.secondPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                if (p === 1 || p === 4 || p === 7) {     //check horizontal for seond column
+                    if (arrayCells[p].children().html() === undefined && (arrayCells[p - 1].children().html() === arrayCells[p + 1].children().html() && arrayCells[p - 1].children().html() === self.options.secondPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -376,8 +454,8 @@
                         flag = false;
                         return;
                     }
-                    else if (arrayCells[p].children().html() == undefined && (arrayCells[p - 1].children().html() == arrayCells[p + 1].children().html() && arrayCells[p - 1].children().html() == self.options.firstPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    else if (arrayCells[p].children().html() === undefined && (arrayCells[p - 1].children().html() === arrayCells[p + 1].children().html() && arrayCells[p - 1].children().html() === self.options.firstPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -386,9 +464,9 @@
                         return;
                     }
                 }
-                if (p == 2 || p == 5 || p == 8) {      //check horizontal for third column
-                    if (arrayCells[p].children().html() == undefined && (arrayCells[p - 1].children().html() == arrayCells[p - 2].children().html() && arrayCells[p - 1].children().html() == self.options.secondPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                if (p === 2 || p === 5 || p === 8) {      //check horizontal for third column
+                    if (arrayCells[p].children().html() === undefined && (arrayCells[p - 1].children().html() === arrayCells[p - 2].children().html() && arrayCells[p - 1].children().html() === self.options.secondPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -396,8 +474,8 @@
                         flag = false;
                         return;
                     }
-                    else if (arrayCells[p].children().html() == undefined && (arrayCells[p - 1].children().html() == arrayCells[p - 2].children().html() && arrayCells[p - 1].children().html() == self.options.firstPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    else if (arrayCells[p].children().html() === undefined && (arrayCells[p - 1].children().html() === arrayCells[p - 2].children().html() && arrayCells[p - 1].children().html() === self.options.firstPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -407,9 +485,9 @@
                     }
                 }
                                                                                                                                   
-                if (p == 0 || p == 3 || p == 6) {      //check horizontal for first column
-                    if (arrayCells[p].children().html() == undefined && (arrayCells[p + 1].children().html() == arrayCells[p + 2].children().html() && arrayCells[p + 1].children().html() == self.options.secondPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                if (p === 0 || p === 3 || p === 6) {      //check horizontal for first column
+                    if (arrayCells[p].children().html() === undefined && (arrayCells[p + 1].children().html() === arrayCells[p + 2].children().html() && arrayCells[p + 1].children().html() === self.options.secondPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -417,8 +495,8 @@
                         flag = false;
                         return;
                     }
-                    else if (arrayCells[p].children().html() == undefined && (arrayCells[p + 1].children().html() == arrayCells[p + 2].children().html() && arrayCells[p + 1].children().html() == self.options.firstPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    else if (arrayCells[p].children().html() === undefined && (arrayCells[p + 1].children().html() === arrayCells[p + 2].children().html() && arrayCells[p + 1].children().html() === self.options.firstPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -428,9 +506,9 @@
                     }
                 }
                 //check for diagonals
-                if (p == 0) {
-                    if (arrayCells[p].children().html() == undefined && (arrayCells[p + 4].children().html() == arrayCells[p + 8].children().html() && arrayCells[p + 4].children().html() == self.options.secondPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                if (p === 0) {
+                    if (arrayCells[p].children().html() === undefined && (arrayCells[p + 4].children().html() === arrayCells[p + 8].children().html() && arrayCells[p + 4].children().html() === self.options.secondPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -438,29 +516,8 @@
                         flag = false;
                         return;
                     }
-                    else if (arrayCells[p].children().html() == undefined && (arrayCells[p + 4].children().html() == arrayCells[p + 8].children().html() && arrayCells[p + 4].children().html() == self.options.firstPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
-                        $(arrayCells[p]).append(span);
-                        self._applysecondColor(span);
-                        self._setSecondPlayerIndex(span);
-                        turn = 0;
-                        flag = false;
-                        return;
-                    }
-                }
-
-                if (p == 2) {
-                    if (arrayCells[p].children().html() == undefined && (arrayCells[p + 2].children().html() == arrayCells[p + 4].children().html() && arrayCells[p + 2].children().html() == self.options.secondPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
-                        $(arrayCells[p]).append(span);
-                        self._applysecondColor(span);
-                        self._setSecondPlayerIndex(span);
-                        turn = 0;
-                        flag = false;
-                        return;
-                    }
-                    else if (arrayCells[p].children().html() == undefined && (arrayCells[p + 2].children().html() == arrayCells[p + 4].children().html() && arrayCells[p + 2].children().html() == self.options.firstPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    else if (arrayCells[p].children().html() === undefined && (arrayCells[p + 4].children().html() === arrayCells[p + 8].children().html() && arrayCells[p + 4].children().html() === self.options.firstPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -470,9 +527,9 @@
                     }
                 }
 
-                if (p == 4) {
-                    if (arrayCells[p].children().html() == undefined && ((arrayCells[p + 2].children().html() == arrayCells[p - 2].children().html() && arrayCells[p - 2].children().html() == self.options.secondPlayer) || (arrayCells[p + 4].children().html() == arrayCells[p - 4].children().html() && arrayCells[p - 4].children().html() == self.options.secondPlayer))) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                if (p === 2) {
+                    if (arrayCells[p].children().html() === undefined && (arrayCells[p + 2].children().html() === arrayCells[p + 4].children().html() && arrayCells[p + 2].children().html() === self.options.secondPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -480,29 +537,8 @@
                         flag = false;
                         return;
                     }
-                    else if (arrayCells[p].children().html() == undefined && ((arrayCells[p + 2].children().html() == arrayCells[p - 2].children().html() && arrayCells[p - 2].children().html() == self.options.firstPlayer) || (arrayCells[p + 4].children().html() == arrayCells[p - 4].children().html() && arrayCells[p - 4].children().html() == self.options.firstPlayer))) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
-                        $(arrayCells[p]).append(span);
-                        self._applysecondColor(span);
-                        self._setSecondPlayerIndex(span);
-                        turn = 0;
-                        flag = false;
-                        return;
-                    }
-                }
-
-                if (p == 6) {
-                    if (arrayCells[p].children().html() == undefined && (arrayCells[p - 2].children().html() == arrayCells[p - 4].children().html() && arrayCells[p - 2].children().html() == self.options.secondPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
-                        $(arrayCells[p]).append(span);
-                        self._applysecondColor(span);
-                        self._setSecondPlayerIndex(span);
-                        turn = 0;
-                        flag = false;
-                        return;
-                    }
-                    else if (arrayCells[p].children().html() == undefined && (arrayCells[p - 2].children().html() == arrayCells[p - 4].children().html() && arrayCells[p - 2].children().html() == self.options.firstPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    else if (arrayCells[p].children().html() === undefined && (arrayCells[p + 2].children().html() === arrayCells[p + 4].children().html() && arrayCells[p + 2].children().html() === self.options.firstPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -512,9 +548,9 @@
                     }
                 }
 
-                if (p == 8) {
-                    if (arrayCells[p].children().html() == undefined && (arrayCells[p - 4].children().html() == arrayCells[p - 8].children().html() && arrayCells[p - 4].children().html() == self.options.secondPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                if (p === 4) {
+                    if (arrayCells[p].children().html() === undefined && ((arrayCells[p + 2].children().html() === arrayCells[p - 2].children().html() && arrayCells[p - 2].children().html() === self.options.secondPlayer) || (arrayCells[p + 4].children().html() === arrayCells[p - 4].children().html() && arrayCells[p - 4].children().html() === self.options.secondPlayer))) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -522,8 +558,50 @@
                         flag = false;
                         return;
                     }
-                    else if (arrayCells[p].children().html() == undefined && (arrayCells[p - 4].children().html() == arrayCells[p - 8].children().html() && arrayCells[p - 4].children().html() == self.options.firstPlayer)) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    else if (arrayCells[p].children().html() === undefined && ((arrayCells[p + 2].children().html() === arrayCells[p - 2].children().html() && arrayCells[p - 2].children().html() === self.options.firstPlayer) || (arrayCells[p + 4].children().html() === arrayCells[p - 4].children().html() && arrayCells[p - 4].children().html() === self.options.firstPlayer))) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
+                        $(arrayCells[p]).append(span);
+                        self._applysecondColor(span);
+                        self._setSecondPlayerIndex(span);
+                        turn = 0;
+                        flag = false;
+                        return;
+                    }
+                }
+
+                if (p === 6) {
+                    if (arrayCells[p].children().html() === undefined && (arrayCells[p - 2].children().html() === arrayCells[p - 4].children().html() && arrayCells[p - 2].children().html() === self.options.secondPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
+                        $(arrayCells[p]).append(span);
+                        self._applysecondColor(span);
+                        self._setSecondPlayerIndex(span);
+                        turn = 0;
+                        flag = false;
+                        return;
+                    }
+                    else if (arrayCells[p].children().html() === undefined && (arrayCells[p - 2].children().html() === arrayCells[p - 4].children().html() && arrayCells[p - 2].children().html() === self.options.firstPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
+                        $(arrayCells[p]).append(span);
+                        self._applysecondColor(span);
+                        self._setSecondPlayerIndex(span);
+                        turn = 0;
+                        flag = false;
+                        return;
+                    }
+                }
+
+                if (p === 8) {
+                    if (arrayCells[p].children().html() === undefined && (arrayCells[p - 4].children().html() === arrayCells[p - 8].children().html() && arrayCells[p - 4].children().html() === self.options.secondPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
+                        $(arrayCells[p]).append(span);
+                        self._applysecondColor(span);
+                        self._setSecondPlayerIndex(span);
+                        turn = 0;
+                        flag = false;
+                        return;
+                    }
+                    else if (arrayCells[p].children().html() === undefined && (arrayCells[p - 4].children().html() === arrayCells[p - 8].children().html() && arrayCells[p - 4].children().html() === self.options.firstPlayer)) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[p]).append(span);
                         self._applysecondColor(span);
                         self._setSecondPlayerIndex(span);
@@ -535,8 +613,8 @@
             }
                                                                                                                                   
             if (flag) {
-                if (arrayCells[0].children().html() == undefined) {
-                    var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                if (arrayCells[0].children().html() === undefined) {
+                    var span = $('<span></span>').addClass(self.css.secondPlayer);
                     $(arrayCells[0]).append(span);                
                     self._applysecondColor(span);
                     self._setSecondPlayerIndex(span);
@@ -544,8 +622,8 @@
                     return;
                 }
                 else {
-                    if (arrayCells[3].children().html() == undefined) {
-                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                    if (arrayCells[3].children().html() === undefined) {
+                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                         $(arrayCells[3]).append(span);
                         self._setSecondPlayerIndex(span);
                         self._applysecondColor(span);
@@ -553,8 +631,8 @@
                         return;
                     }
                     else {
-                        if (arrayCells[4].children().html() == undefined) {
-                            var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                        if (arrayCells[4].children().html() === undefined) {
+                            var span = $('<span></span>').addClass(self.css.secondPlayer);
                             $(arrayCells[4]).append(span);
                             self._applysecondColor(span);
                             self._setSecondPlayerIndex(span);
@@ -562,8 +640,8 @@
                             return;
                         }
                         else {
-                            if (arrayCells[7].children().html() == undefined) {
-                                var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                            if (arrayCells[7].children().html() === undefined) {
+                                var span = $('<span></span>').addClass(self.css.secondPlayer);
                                 $(arrayCells[7]).append(span);
                                 self._applysecondColor(span);
                                 self._setSecondPlayerIndex(span);
@@ -571,8 +649,8 @@
                                 return;
                             }
                             else {
-                                if (arrayCells[8].children().html() == undefined) {
-                                    var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                                if (arrayCells[8].children().html() === undefined) {
+                                    var span = $('<span></span>').addClass(self.css.secondPlayer);
                                     $(arrayCells[8]).append(span);
                                     self._applysecondColor(span);
                                     self._setSecondPlayerIndex(span);
@@ -580,8 +658,8 @@
                                     return;
                                 }
                                 else {
-                                    if (arrayCells[5].children().html() == undefined) {
-                                        var span = $('<span></span>').addClass(self.css.secondPlayerPlayer);
+                                    if (arrayCells[5].children().html() === undefined) {
+                                        var span = $('<span></span>').addClass(self.css.secondPlayer);
                                         $(arrayCells[5]).append(span);
                                         self._applysecondColor(span);
                                         self._setSecondPlayerIndex(span);
@@ -627,13 +705,13 @@
             if (jQuery.inArray("", arrayOfSpans) !== -1) {
                 //vertical
                 for (var u = 0; u <= 2; u++) {
-                    if (arrayCells[u].children().html() == arrayCells[u + 3].children().html() && arrayCells[u].children().html() == arrayCells[u + 6].children().html() && arrayCells[u].children().html() == this.options.firstPlayer) {
+                    if (arrayCells[u].children().html() === arrayCells[u + 3].children().html() && arrayCells[u].children().html() === arrayCells[u + 6].children().html() && arrayCells[u].children().html() === this.options.firstPlayer) {
                         gameEnded = true;
                         this._alertGameEndFirstPlayerWin();
                         return gameEnded;
 
                     }
-                    else if (arrayCells[u].children().html() == arrayCells[u + 3].children().html() && arrayCells[u].children().html() == arrayCells[u + 6].children().html() && arrayCells[u].children().html() == this.options.secondPlayer) {
+                    else if (arrayCells[u].children().html() === arrayCells[u + 3].children().html() && arrayCells[u].children().html() === arrayCells[u + 6].children().html() && arrayCells[u].children().html() === this.options.secondPlayer) {
                         gameEnded = true;
                         this._alertGameEndSecondPlayerWin();
                         return gameEnded;
@@ -642,13 +720,13 @@
 
                 //horizontal
                 for (var h = 0; h < 6; h = h + 3) {
-                    if (arrayCells[h].children().html() == arrayCells[h + 1].children().html() && arrayCells[h].children().html() == arrayCells[h + 2].children().html() && arrayCells[h].children().html() == this.options.firstPlayer) {
+                    if (arrayCells[h].children().html() === arrayCells[h + 1].children().html() && arrayCells[h].children().html() === arrayCells[h + 2].children().html() && arrayCells[h].children().html() === this.options.firstPlayer) {
                         gameEnded = true;
                         this._alertGameEndFirstPlayerWin();
                         return gameEnded;
 
                     }
-                    else if (arrayCells[h].children().html() == arrayCells[h + 1].children().html() && arrayCells[h].children().html() == arrayCells[h + 2].children().html() && arrayCells[h].children().html() == this.options.secondPlayer) {
+                    else if (arrayCells[h].children().html() === arrayCells[h + 1].children().html() && arrayCells[h].children().html() === arrayCells[h + 2].children().html() && arrayCells[h].children().html() === this.options.secondPlayer) {
                         gameEnded = true;
                         this._alertGameEndSecondPlayerWin();
                         return gameEnded;
@@ -657,26 +735,26 @@
                 }
                 //diagonals
 
-                if (arrayCells[0].children().html() == arrayCells[4].children().html() && arrayCells[0].children().html() == arrayCells[8].children().html() && arrayCells[0] == this.options.firstPlayer) {
+                if (arrayCells[0].children().html() === arrayCells[4].children().html() && arrayCells[0].children().html() === arrayCells[8].children().html() && arrayCells[0] === this.options.firstPlayer) {
                     gameEnded = true;
                     this._alertGameEndFirstPlayerWin();
                     return gameEnded;
 
                 }
-                else if (arrayCells[0].children().html() == arrayCells[4].children().html() && arrayCells[0].children().html() == arrayCells[8] && arrayCells[0].children().html() == this.options.secondPlayer) {
+                else if (arrayCells[0].children().html() === arrayCells[4].children().html() && arrayCells[0].children().html() === arrayCells[8] && arrayCells[0].children().html() === this.options.secondPlayer) {
                     gameEnded = true;
                     this._alertGameEndSecondPlayerWin();
                     return gameEnded;
 
                 }
 
-                if (arrayCells[2].children().html() == arrayCells[4].children().html() && arrayCells[2].children().html() == arrayCells[6].children().html() && arrayCells[2].children().html() == this.options.firstPlayer) {
+                if (arrayCells[2].children().html() === arrayCells[4].children().html() && arrayCells[2].children().html() === arrayCells[6].children().html() && arrayCells[2].children().html() === this.options.firstPlayer) {
                     gameEnded = true;
                     this._alertGameEndFirstPlayerWin();
                     return gameEnded;
 
                 }
-                else if (arrayCells[2].children().html() == arrayCells[4].children().html() && arrayCells[2].children().html() == arrayCells[6].children().html() && arrayCells[2].children().html() == this.options.secondPlayer) {
+                else if (arrayCells[2].children().html() === arrayCells[4].children().html() && arrayCells[2].children().html() === arrayCells[6].children().html() && arrayCells[2].children().html() === this.options.secondPlayer) {
                     gameEnded = true;
                     this._alertGameEndSecondPlayerWin();
                     return gameEnded;

@@ -1,6 +1,8 @@
 .tic-tac-toe{
     border-style: solid;
     border-width: 3px;
+    height: 100%;
+    width:100%;
 }
 .tic-tac-toe-tableCell{
     width: 33%;
