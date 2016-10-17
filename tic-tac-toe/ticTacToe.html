@@ -3,54 +3,63 @@
     <head>
         <link href="ticTacToe.css" type="text/css" rel="stylesheet"/>
         <link rel="stylesheet" href="jquery-ui.css">
-
+        <link href="http://localhost/igniteui16.1/css/themes/infragistics/infragistics.theme.css" rel="stylesheet" />
+        <link href="http://localhost/igniteui16.1/css/structure/infragistics.css" rel="stylesheet" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script   src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"  ></script>
-
+        <script src="http://localhost/igniteui16.1/js/infragistics.core.js"></script>
+        <script src="http://localhost/igniteui16.1/js/infragistics.lob.js"></script>
+        <script src="http://localhost/igniteui16.1/js/infragistics.loader.js"></script>
         <script src="ticTacToe.js"> </script>
 
         <script type="text/javascript">
             $(document).ready(function () {
                 $("#div1").ticTacToe({
-                    rendered: function (evt, ui) {
-                        console.log("rendered");
-                    },
-                    rendering: function (evt, ui) {
-                        console.log(ui.element);
-                        console.log("rendering");
-                        //return false;
-                    },
-                    gameStarted: function (evt, ui) {
-                        console.log("gameStarted");
-                    },
-                    gameStarting: function (evt, ui) {
-                        console.log("gameStarting");
-                        //return false;
-                    },
-                    gameEnded: function (evt, ui) {
-                        console.log("gameEnded");
-                    },
-                    gameEnding: function (evt, ui) {
-                        console.log("gameEnding");
-                        //return false;
-                    },
-                    cellRendering: function (evt, ui) {
-                        $(ui.element).css('background-color', 'green');
-                    },
-                    enableStartButton: true,
-                    firstColor: "red",
-                    secondColor: "blue",
-                    width: "500px",
-                    height: "500px",
-                    backgroundColor: "pink",
+                    //rendered: function (evt, ui) {
+                    //    console.log("rendered");
+                    //},
+                    //rendering: function (evt, ui) {
+                    //    console.log(ui.element);
+                    //    console.log("rendering");
+                    //    //return false;
+                    //},
+                    //gameStarted: function (evt, ui) {
+                    //    console.log("gameStarted");
+                    //},
+                    //gameStarting: function (evt, ui) {
+                    //    console.log("gameStarting");
+                    //    //return false;
+                    //},
+                    //gameEnded: function (evt, ui) {
+                    //    console.log("gameEnded");
+                    //},
+                    //gameEnding: function (evt, ui) {
+                    //    console.log("gameEnding");
+                    //    //return false;
+                    //},
+                    //cellRendering: function (evt, ui) {
+                    //    $(ui.element).css('background-color', 'green');
+                    //},
+                    //enableStartButton: true,
+                    //firstColor: "red",
+                    //secondColor: "blue",
+                    width: "300px",
+                    height: "300px",
+                    //backgroundColor: "pink",
                    enableStartButton: true,
                     enableResetButton: true
                 });
+                // $("#div2").ticTacToe({
+                //     width: "300px",
+                //     height: "300px"
+                // });
+                // $("#div2").ticTacToe("option", "enableStartButton", true);
             });
         </script>
     </head>
 
     <body>
         <div id="div1"></div>
+        <div id="div2"></div>
     </body>
 </html>

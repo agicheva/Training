@@ -18,6 +18,12 @@
     <div id="qunit"></div>
     <div id="qunit-fixture"></div>
     <div id="tictac"></div>
+    <div id="tictac1"></div>
+    <div id="tictac2"></div>
+    <div id="tictac3"></div>
+    <div id="tictac4"></div>
+    <div id="tictac5"></div>
+    <div id="tictac6"></div>
 
     <script>
     $(document).ready(function () {
@@ -27,7 +33,32 @@
             width: "200px",
             height: "200px"
         });
-
+        $("#tictac1").ticTacToe({
+            width: "200px",
+            height: "200px",
+            enableStartButton: true,
+            enableResetButton: true
+        });
+        $("#tictac2").ticTacToe({
+            width: "200px",
+            height: "200px"
+        });
+        $("#tictac3").ticTacToe({
+            width: "200px",
+            height: "200px"
+        });
+        $("#tictac4").ticTacToe({
+            width: "200px",
+            height: "200px",
+        });
+        $("#tictac5").ticTacToe({
+            width: "200px",
+            height: "200px"
+        });
+        $("#tictac6").ticTacToe({
+            width: "200px",
+            height: "200px"
+        });
 		}
 		initialized = false;
 		module("Tic Tac Toe ", {
@@ -82,45 +113,64 @@
         var testId = "Setting fist player index for playing.";
         test(testId, 1, function(){
             $('#tictac').ticTacToe("option", "firstPlayer", "c");
-
             equal($("#tictac").ticTacToe("option", "firstPlayer"), "c", "The first player index for playing is set.");
+        });
+        var testId = "Test if prev value is set if set the same index for both players.";
+        test(testId, 2, function () {
+            $("#tictac4").ticTacToe("option", "fistPlayer", "r");
+            $("#tictac4").ticTacToe("option", "secondPlayer", "r");
+            equal($("#tictac4").ticTacToe("option", "firstPlayer"), "x", "The first player index for playing is set.");
+            equal($("#tictac4").ticTacToe("option", "secondPlayer"), "r", "The second player index for playing is set.");
         });
 
         var testId = "Setting second player index for playing.";
         test(testId, 1, function(){
-            $("#tictac").ticTacToe("option", "secondPlayer", "p");
+            $("#tictac").ticTacToe("option", "secondPlayer", "t");
 
-            equal($("#tictac").ticTacToe("option", "secondPlayer"), "p", "The second player index for playing is set.");
+            equal($("#tictac").ticTacToe("option", "secondPlayer"), "t", "The second player index for playing is set.");
+        });
+        var testId = "Disabled start and reset buttons."
+        test(testId, 3, function () {
+            equal($("#tictac").ticTacToe("option", "enableStartButton"), false, "Start button is not set to true");
+            equal($("#tictac").ticTacToe("option", "enableResetButton"), false, "Reset button is not set to true");
+            equal($("button", $("#tictac")).length, 0, "Both buttons are not rendered.");
         });
 
-        var testId = "Enable start button.";
-        test(testId, 1, function(){
-            $("#tictac").ticTacToe("option", "enableStartButton", true);
+        var testId = "Enable start and reset buttons using set.";
+        test(testId, 3, function(){
+            $("#tictac4").ticTacToe("option", "enableStartButton", true);
+            $("#tictac4").ticTacToe("option", "enableResetButton", true);
+            equal($("#tictac4").ticTacToe("option", "enableStartButton"), true, "The start button is enabled.");
+            equal($("#tictac4").ticTacToe("option", "enableResetButton"), true, "The reset button is enabled.");
 
-            equal($("#tictac").ticTacToe("option", "enableStartButton"), true, "The start button is enabled.");
+            equal($("button", $("#tictac4")).length, 2, "Both buttons are rendered.");
         });
 
-        var testId = "Enable reset button.";
-        test(testId, 1, function(){
-            $("#tictac").ticTacToe("option", "enableResetButton", true);
+        var testId = "Click on start and reset buttons.";
+        test(testId, 2, function(){
+            $("#tictac1 > .start").click();
+            equal($("table", "#tictac1").length, 1, "Start button render playing board(table).");
 
-            equal($("#tictac").ticTacToe("option", "enableResetButton"), true, "The reset button is enabled.");
+            $("#tictac1 > table > tr:nth-child(1) > td:nth-child(1)").click();
+            $("#tictac1 > .reset").click();
+            equal($("#tictac1 > table > tr:nth-child(1) > td:nth-child(1)").text(), "", "Reset button clear the clicked cell.");
         });
+        //TODO
+        var testId = "Test playing and losing the game.";
+        test(testId, 2, function(){
+            $("#tictac2 > table > tr:nth-child(1) > td:nth-child(1)").click();
+            equal($("#tictac2 > table > tr:nth-child(1) > td:nth-child(1)").text(), $("#tictac2").ticTacToe("option", "firstPlayer"), "Right cell was clicked.");
+            for (var i = 1; i <= 3; i++){
+                for (var j = 1; j <= 3; j++){
+                    if($("#tictac2 > table > tr:nth-child(" + i + ") > td:nth-child(" + j + ")").text() != "" && $("#tictac2 > table > tr:nth-child(" + i + ") > td:nth-child(" + j + ")").text() != $("#tictac2").ticTacToe("option", "firstPlayer")){
+                        equal($("#tictac2 > table > tr:nth-child(" + i + ") > td:nth-child(" + j + ")").text(), $("#tictac2").ticTacToe("option", "secondPlayer"), "Second player click on cell");
+                    }
+                }
+            }
 
-        var testId = "Start playing the game ";
-             test(testId, 2, function(){
-                 $("#tictac > table > tr:nth-child(1) > td:nth-child(1)").click();
 
-                 equal($("#tictac > table > tr:nth-child(1) > td:nth-child(1) > span").html(), 
-                    $("#tictac").ticTacToe("option", "firstPlayer"), 
-                    "Right index for the first player in the cell.");
-                    
-                 equal($("#tictac > table > tr:nth-child(2) > td:nth-child(1) > span").html(), 
-                    $("#tictac").ticTacToe("option", "secondPlayer"), 
-                    "Right index for the second player in the cell.");
-            });
         });
-
+    });
     </script>
 </body>
 </html>

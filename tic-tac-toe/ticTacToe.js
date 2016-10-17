@@ -1,3 +1,4 @@
+/*jshint loopfunc: true */
 (function ($) {
 	$.widget("ui.ticTacToe", {
 		vars: {
@@ -204,6 +205,7 @@
 						}
 						if (isGameEnding) {
 							this._triggerGameEnded(this.vars._arrayCells);
+							this.vars._arrayCells = [];
 						}
 					}
 						break;
@@ -234,13 +236,13 @@
 					row.appendTo(table);
 					this._triggerCellRendering();
 					for (var j = 0; j < 3; j++) {
-						var cell = $("<td></td>")
+					    var cell = $("<td></td>")
 							.addClass(this.css.cell)
 							.appendTo(row)
-							.on("click", function () {
-								self._makeMoves(this, gameEnded, arrayCells);
-							});
-						arrayCells.push(cell);
+                            .on("click", function () {
+							    self._makeMoves(this, gameEnded, arrayCells);
+                            });
+					    arrayCells.push(cell);
 					}
 					this._triggerRendered();
 				}
@@ -250,7 +252,7 @@
 
 		_makeMoves: function(element, gameEnded, arrayCells) {
 			var turn = 0;
-			if (turn === 0) {
+			if (turn === 0 && $(element).children()[ 0 ] === undefined) {
 				var span = $("<span></span>").addClass(this.css.firstPlayer);
 				$(element).append(span);
 				this._setFirstPlayerIndex(span);
@@ -308,10 +310,12 @@
 					this._setBackgroundColor(value);
 					break;
 				case "enableStartButton":
-					this._setStartButton(value);
+				    this._setStartButton(value);
+				    this._renderStartButton();
 					break;
 				case "enableResetButton":
-					this._setResetButton(value);
+				    this._setResetButton(value);
+				    this._renderResetButton();
 					break;
 				default:
 					break;
@@ -319,11 +323,12 @@
 		},
 
 		_setStartButton: function(value) {
-			this.options.enableStartButton = value;
+		    this.options.enableStartButton = value;
+
 		},
 
 		_setResetButton: function(value) {
-			this.options.enableResetButton = value;
+		    this.options.enableResetButton = value;
 		},
 
 		_setWidth: function(value) {
@@ -373,16 +378,19 @@
 				$(this.vars._arrayCells[ i ]).off("click");
 			}
 		},
-
+		_getRandomCell: function() {
+			return Math.floor(Math.random() * 9);
+		},
 		compMove: function (turn, gameEnded, arrayCells) {
 			var flag = true;
 			var self = this;
+			var span = $("<span></span>").addClass(self.css.secondPlayer);
+
 			for (var p = 0; p < 9; p++) {
 				if (p >= 0 && p < 3) {    //check vertical for first row
 					if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p + 3 ].children().html() === arrayCells[ p + 6 ].children().html() &&
 					arrayCells[ p + 3 ].children().html() === self.options.secondPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -392,7 +400,6 @@
 					} else if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p + 3 ].children().html() === arrayCells[ p + 6 ].children().html() &&
 					arrayCells[ p + 3 ].children().html() === self.options.firstPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -406,7 +413,6 @@
 					if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p + 3 ].children().html() === arrayCells[ p - 3 ].children().html() &&
 					arrayCells[ p + 3 ].children().html() === self.options.secondPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -416,7 +422,6 @@
 					} else if (arrayCells[ p ].children().html() === undefined &&
 						(arrayCells[ p + 3 ].children().html() === arrayCells[ p - 3 ].children().html() &&
 						arrayCells [ p + 3 ].children().html() === self.options.firstPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -430,7 +435,6 @@
 					if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p - 3 ].children().html() === arrayCells[ p - 6 ].children().html() &&
 					arrayCells[ p - 3 ].children().html() === self.options.secondPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -440,7 +444,6 @@
 					} else if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p - 3 ].children().html() === arrayCells[ p - 6 ].children().html() &&
 					arrayCells[ p - 3 ].children().html() === self.options.firstPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -454,7 +457,6 @@
 					if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p - 1 ].children().html() === arrayCells[ p + 1 ].children().html() &&
 					arrayCells[ p - 1 ].children().html() === self.options.secondPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -464,7 +466,6 @@
 					} else if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p - 1 ].children().html() === arrayCells[ p + 1 ].children().html() &&
 					arrayCells[ p - 1 ].children().html() === self.options.firstPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -477,7 +478,6 @@
 					if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p - 1 ].children().html() === arrayCells[ p - 2 ].children().html() &&
 					arrayCells[ p - 1 ].children().html() === self.options.secondPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -487,7 +487,6 @@
 					} else if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p - 1 ].children().html() === arrayCells[ p - 2 ].children().html() &&
 					arrayCells[ p - 1 ].children().html() === self.options.firstPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -501,7 +500,6 @@
 					if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p + 1 ].children().html() === arrayCells[ p + 2 ].children().html() &&
 					arrayCells[ p + 1 ].children().html() === self.options.secondPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -511,7 +509,6 @@
 					} else if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p + 1 ].children().html() === arrayCells[ p + 2 ].children().html() &&
 					arrayCells[ p + 1 ].children().html() === self.options.firstPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -526,7 +523,6 @@
 					if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p + 4 ].children().html() === arrayCells[ p + 8 ].children().html() &&
 					arrayCells[ p + 4 ].children().html() === self.options.secondPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -536,7 +532,6 @@
 					} else if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p + 4 ].children().html() === arrayCells[ p + 8 ].children().html() &&
 					arrayCells[ p + 4 ].children().html() === self.options.firstPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -550,7 +545,6 @@
 					if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p + 2 ].children().html() === arrayCells[ p + 4 ].children().html() &&
 					arrayCells[ p + 2 ].children().html() === self.options.secondPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -560,7 +554,6 @@
 					} else if (arrayCells[ p ].children().html() === undefined &&
 					(arrayCells[ p + 2 ].children().html() === arrayCells[ p + 4 ].children().html() &&
 					arrayCells[ p + 2 ].children().html() === self.options.firstPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -576,7 +569,6 @@
 					arrayCells[ p - 2 ].children().html() === self.options.secondPlayer) ||
 					(arrayCells[ p + 4 ].children().html() === arrayCells[ p - 4 ].children().html() &&
 					arrayCells[ p - 4 ].children().html() === self.options.secondPlayer))) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -588,7 +580,6 @@
 					arrayCells[ p - 2 ].children().html() === self.options.firstPlayer) ||
 					(arrayCells[ p + 4 ].children().html() === arrayCells[ p - 4 ].children().html() &&
 						arrayCells[ p - 4 ].children().html() === self.options.firstPlayer))) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -602,7 +593,6 @@
 					if (arrayCells[ p ].children().html() === undefined &&
 						(arrayCells[ p - 2 ].children().html() === arrayCells[ p - 4 ].children().html() &&
 						arrayCells[ p - 2 ].children().html() === self.options.secondPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -612,7 +602,6 @@
 					} else if (arrayCells[ p ].children().html() === undefined &&
 						(arrayCells[ p - 2 ].children().html() === arrayCells[ p - 4 ].children().html() &&
 						arrayCells[ p - 2 ].children().html() === self.options.firstPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -626,7 +615,6 @@
 					if (arrayCells[ p ].children().html() === undefined &&
 						(arrayCells[ p - 4 ].children().html() === arrayCells[ p - 8 ].children().html() &&
 						arrayCells[ p - 4 ].children().html() === self.options.secondPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -636,7 +624,6 @@
 					} else if (arrayCells[ p ].children().html() === undefined &&
 						(arrayCells[ p - 4 ].children().html() === arrayCells[ p - 8 ].children().html() &&
 						arrayCells[ p - 4 ].children().html() === self.options.firstPlayer)) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
 						$(arrayCells[ p ]).append(span);
 						self._applysecondColor(span);
 						self._setSecondPlayerIndex(span);
@@ -648,85 +635,48 @@
 			}
 
 			if (flag) {
-				if (arrayCells[ 0 ].children().html() === undefined) {
-					var span = $("<span></span>").addClass(self.css.secondPlayer);
-					$(arrayCells[ 0 ]).append(span);
+				var rndCell = self._getRandomCell();
+				if (arrayCells[ rndCell ].children().html() === undefined) {
+					$(arrayCells[ rndCell ]).append(span);
 					self._applysecondColor(span);
 					self._setSecondPlayerIndex(span);
 					turn = 0;
 					return;
 				} else {
-					if (arrayCells[ 3 ].children().html() === undefined) {
-						var span = $("<span></span>").addClass(self.css.secondPlayer);
-						$(arrayCells[ 3 ]).append(span);
+					if (arrayCells[ rndCell + 1 ].children().html() === undefined) {
+						$(arrayCells[ rndCell + 1 ]).append(span);
 						self._setSecondPlayerIndex(span);
 						self._applysecondColor(span);
 						turn = 0;
 						return;
-					} else {
-						if (arrayCells[ 4 ].children().html() === undefined) {
-							var span = $("<span></span>").addClass(self.css.secondPlayer);
-							$(arrayCells[ 4 ]).append(span);
-							self._applysecondColor(span);
-							self._setSecondPlayerIndex(span);
-							turn = 0;
-							return;
-						} else {
-							if (arrayCells[ 7 ].children().html() === undefined) {
-								var span = $("<span></span>").addClass(self.css.secondPlayer);
-								$(arrayCells[ 7 ]).append(span);
-								self._applysecondColor(span);
-								self._setSecondPlayerIndex(span);
-								turn = 0;
-								return;
-							} else {
-								if (arrayCells[ 8 ].children().html() === undefined) {
-									var span = $("<span></span>").addClass(self.css.secondPlayer);
-									$(arrayCells[ 8 ]).append(span);
-									self._applysecondColor(span);
-									self._setSecondPlayerIndex(span);
-									turn = 0;
-									return;
-								} else {
-									if (arrayCells[ 5 ].children().html() === undefined) {
-										var span = $("<span></span>").addClass(self.css.secondPlayer);
-										$(arrayCells[ 5 ]).append(span);
-										self._applysecondColor(span);
-										self._setSecondPlayerIndex(span);
-										turn = 0;
-										return;
-									}
-								}
-							}
-						}
 					}
 				}
 			}
 		},
 
-		_alertGameEndFirstPlayerWin: function() {
-			$("<div></div>")
-				.addClass(this.css.dialog)
-				.dialog({
-					title: "Result Dialog"
-				});
-			$("<p></p>").appendTo("." + this.css.dialog)
-			.html("Congrads you win!");
+		_alertGameEndFirstPlayerWin: function () {
+		    $("<div></div>")
+                .addClass(this.css.dialog)
+                .dialog({
+                    title: "Result Dialog"
+                });
+		    $("<p></p>").appendTo("." + this.css.dialog)
+            .html("Congrads you win!");
 		},
 
 		_alertGameEndSecondPlayerWin: function () {
-			$("<div></div>")
-				.addClass(this.css.dialog)
-				.dialog({
-					title: "Result Dialog"
-				});
-			$("<p></p>").appendTo("." + this.css.dialog)
-			.html("Sorry, you lose!");
+		    $("<div></div>")
+                .addClass(this.css.dialog)
+                .dialog({
+                    title: "Result Dialog"
+                });
+		    $("<p></p>").appendTo("." + this.css.dialog)
+            .html("Sorry, you lose!");
 		},
 
 		checkWin: function (gameEnded, arrayCells) {
 			//var arrayCells = this._render();
-			var arrayOfSpans = new Array();
+		    var arrayOfSpans = [];
 			for (var t = 0; t < 9; t++) {
 				var index = arrayCells[ t ].html();
 				arrayOfSpans.push(index);
@@ -798,12 +748,12 @@
 			} else {
 				gameEnded = true;
 				$("<div></div>")
-				.addClass(this.css.dialog)
-				.dialog({
-					title: "Result Dialog"
-				});
+                .addClass(this.css.dialog)
+                .dialog({
+                    title: "Result Dialog"
+                });
 				$("<p></p>").appendTo("." + this.css.dialog)
-				.html("It's a tie! Try again.");
+                .html("It's a tie! Try again.");
 				return gameEnded;
 			}
 		}
