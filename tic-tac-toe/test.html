@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-1.23.0.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/qunit/qunit-1.23.0.js"></script>
+
+    <link href="http://localhost/igniteui16.1/css/themes/infragistics/infragistics.theme.css" rel="stylesheet" type="text/css" />
+    <link href="http://localhost/igniteui16.1/css/structure/infragistics.css" rel="stylesheet" type="text/css" />
+ 
+    <script src="http://localhost/igniteui16.1/js/infragistics.core.js"></script>
+    <script src="http://localhost/igniteui16.1/js/infragistics.lob.js"></script>
     <!-- Your project file goes here -->
     <script type="text/javascript" src="ticTacToe.js"></script>
     <link rel="stylesheet" href="ticTacToe.css">
@@ -24,7 +30,12 @@
     <div id="tictac4"></div>
     <div id="tictac5"></div>
     <div id="tictac6"></div>
-
+    <div id="tictac7"></div>
+    <div id="tictac8"></div>
+    <div id="tictac9"></div>
+    <div id="tictac10"></div>
+    <div id="tictac11"></div>
+    <div id="tictac12"></div>
     <script>
     $(document).ready(function () {
     // Create a tictac
@@ -56,6 +67,34 @@
             height: "200px"
         });
         $("#tictac6").ticTacToe({
+            width: "200px",
+            height: "200px"
+        });
+        $("#tictac7").ticTacToe({
+            width: "200px",
+            height: "200px",
+            firstPlayer: "x"
+        });
+        $("#tictac8").ticTacToe({
+            width: "200px",
+            height: "200px"
+        });
+        $("#tictac9").ticTacToe({
+            width: "200px",
+            height: "200px"
+        });
+        $("#tictac10").ticTacToe({
+            width: "200px",
+            height: "200px",
+            firstPlayer: "o"
+        });
+        $("#tictac11").ticTacToe({
+            width: "200px",
+            height: "200px",
+            enableStartButton: true,
+            enableResetButton: true
+        });
+        $("#tictac12").ticTacToe({
             width: "200px",
             height: "200px"
         });
@@ -115,6 +154,14 @@
             $('#tictac').ticTacToe("option", "firstPlayer", "c");
             equal($("#tictac").ticTacToe("option", "firstPlayer"), "c", "The first player index for playing is set.");
         });
+
+        var testId = "Setting second player index for playing.";
+        test(testId, 1, function(){
+            $("#tictac").ticTacToe("option", "secondPlayer", "t");
+
+            equal($("#tictac").ticTacToe("option", "secondPlayer"), "t", "The second player index for playing is set.");
+        });
+        
         var testId = "Test if prev value is set if set the same index for both players.";
         test(testId, 2, function () {
             $("#tictac4").ticTacToe("option", "fistPlayer", "r");
@@ -123,12 +170,6 @@
             equal($("#tictac4").ticTacToe("option", "secondPlayer"), "r", "The second player index for playing is set.");
         });
 
-        var testId = "Setting second player index for playing.";
-        test(testId, 1, function(){
-            $("#tictac").ticTacToe("option", "secondPlayer", "t");
-
-            equal($("#tictac").ticTacToe("option", "secondPlayer"), "t", "The second player index for playing is set.");
-        });
         var testId = "Disabled start and reset buttons."
         test(testId, 3, function () {
             equal($("#tictac").ticTacToe("option", "enableStartButton"), false, "Start button is not set to true");
@@ -148,27 +189,69 @@
 
         var testId = "Click on start and reset buttons.";
         test(testId, 2, function(){
-            $("#tictac1 > .start").click();
-            equal($("table", "#tictac1").length, 1, "Start button render playing board(table).");
+            $("#tictac11 > .start").click();
+            equal($("table", "#tictac11").length, 1, "Start button render playing board(table).");
 
-            $("#tictac1 > table > tr:nth-child(1) > td:nth-child(1)").click();
-            $("#tictac1 > .reset").click();
-            equal($("#tictac1 > table > tr:nth-child(1) > td:nth-child(1)").text(), "", "Reset button clear the clicked cell.");
+            $("#tictac11 > table .tic-tac-toe-tableCell").click();
+            $("#tictac11 > .reset").click();
+            equal($("#tictac11 > table > tr:nth-child(1) > td:nth-child(1)").text(), "", "Reset button clear the clicked cell.");
         });
-        //TODO
-        var testId = "Test playing and losing the game.";
-        test(testId, 2, function(){
-            $("#tictac2 > table > tr:nth-child(1) > td:nth-child(1)").click();
-            equal($("#tictac2 > table > tr:nth-child(1) > td:nth-child(1)").text(), $("#tictac2").ticTacToe("option", "firstPlayer"), "Right cell was clicked.");
-            for (var i = 1; i <= 3; i++){
-                for (var j = 1; j <= 3; j++){
-                    if($("#tictac2 > table > tr:nth-child(" + i + ") > td:nth-child(" + j + ")").text() != "" && $("#tictac2 > table > tr:nth-child(" + i + ") > td:nth-child(" + j + ")").text() != $("#tictac2").ticTacToe("option", "firstPlayer")){
-                        equal($("#tictac2 > table > tr:nth-child(" + i + ") > td:nth-child(" + j + ")").text(), $("#tictac2").ticTacToe("option", "secondPlayer"), "Second player click on cell");
-                    }
-                }
+
+        var testId = "Test if the cells are clicked.";
+        test(testId, 9, function(){
+            $("#tictac2 > table .tic-tac-toe-tableCell").click();
+            equal($("#tictac2 > table .tic-tac-toe-tableCell clicked").length, 0, "All right with clicking on cells");
+
+            $("#tictac3 > table > tr:nth-child(3) > td:nth-child(3)").click();
+            $("#tictac3 > table .tic-tac-toe-tableCell").click();
+            equal($("#tictac3 > table .tic-tac-toe-tableCell clicked").length, 0, "All right with clicking on cells");
+
+            $("#tictac4 > table > tr:nth-child(2) > td:nth-child(2)").click();
+            $("#tictac4 > table .tic-tac-toe-tableCell").click();
+            equal($("#tictac4 > table .tic-tac-toe-tableCell clicked").length, 0, "All right with clicking on cells");
+
+            $("#tictac5 > table > tr:nth-child(1) > td:nth-child(2)").click();
+            $("#tictac5 > table .tic-tac-toe-tableCell").click();
+            equal($("#tictac5 > table .tic-tac-toe-tableCell clicked").length, 0, "All right with clicking on cells");
+
+            $("#tictac6 > table > tr:nth-child(1) > td:nth-child(3)").click();
+            $("#tictac6 > table .tic-tac-toe-tableCell").click();
+            equal($("#tictac6 > table .tic-tac-toe-tableCell clicked").length, 0, "All right with clicking on cells");
+
+            $("#tictac7 > table > tr:nth-child(2) > td:nth-child(1)").click();
+            $("#tictac7 > table .tic-tac-toe-tableCell").click();
+            equal($("#tictac7 > table .tic-tac-toe-tableCell clicked").length, 0, "All right with clicking on cells");
+
+            $("#tictac7 > table > tr:nth-child(2) > td:nth-child(3)").click();
+            $("#tictac7 > table .tic-tac-toe-tableCell").click();
+            equal($("#tictac7 > table .tic-tac-toe-tableCell clicked").length, 0, "All right with clicking on cells");
+
+            $("#tictac8 > table > tr:nth-child(3) > td:nth-child(1)").click();
+            $("#tictac8 > table .tic-tac-toe-tableCell").click();
+            equal($("#tictac8 > table .tic-tac-toe-tableCell clicked").length, 0, "All right with clicking on cells");
+            
+            $("#tictac9 > table > tr:nth-child(3) > td:nth-child(2)").click();
+            $("#tictac9 > table .tic-tac-toe-tableCell").click();
+            equal($("#tictac9 > table .tic-tac-toe-tableCell clicked").length, 0, "All right with clicking on cells");
+        });
+
+        var testId = "Check destroy method"
+        test(testId, 1, function(){
+            $("#tictac10").ticTacToe("destroy");
+            equal($("#tictac10").data("ticTacToe"), undefined, "The widget was destroyed");
+        });
+
+        var testId = "Check if I can stub the random function.";
+        test(testId, 1, function(){
+            $("#tictac12 > table > tr:nth-child(1) > td:nth-child(1)").click();
+            if($("#tictac12 > table > tr:nth-child(3) > td:nth-child(1)").text() == ""){
+                $("#tictac12 > table > tr:nth-child(3) > td:nth-child(1)").click();
+                equal($("#tictac12 > table > tr:nth-child(2) > td:nth-child(1)").text(), $("#tictac12").ticTacToe("option", "secondPlayer"), "All right with clicking on cells");
             }
-
-
+            else{
+                $("#tictac12 > table > tr:nth-child(1) > td:nth-child(3)").click();
+                equal($("#tictac12 > table > tr:nth-child(1) > td:nth-child(2)").text(), $("#tictac12").ticTacToe("option", "secondPlayer"), "All right with clicking on cells");
+            }
         });
     });
     </script>
